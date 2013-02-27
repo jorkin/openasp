@@ -1,0 +1,190 @@
+<!--
+ Licensed to the Apache Software Foundation (ASF) under one or more
+  contributor license agreements.  See the NOTICE file distributed with
+  this work for additional information regarding copyright ownership.
+  The ASF licenses this file to You under the Apache License, Version 2.0
+  (the "License"); you may not use this file except in compliance with
+  the License.  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+-->
+<!-- DTD for JSP 2.0
+     thanks to Bob Foster, WebGain
+-->
+
+<!-- 
+     This DTD is not conditional on any parameter entities in the internal
+     subset and does not export any general entities.
+-->
+
+<!--================== Constrained Names ====================================-->
+
+<!ENTITY % URI "CDATA">
+    <!-- a Uniform Resource Identifier, see [RFC2396] -->
+
+<!ENTITY % UriList "CDATA">
+    <!-- a space separated list of Uniform Resource Identifiers -->
+
+<!ENTITY % URL "CDATA">
+    <!-- a relative urlSpec is as in Section 2.10.2. -->
+
+<!ENTITY % BeanID "IDREF">
+    <!-- a previously declared bean ID in the current scope. -->
+
+<!ENTITY % Prefix "CDATA">
+    <!-- a Name that contains no : characters. -->
+
+<!ENTITY % ClassName "CDATA">
+    <!-- a fully qualified class name. -->
+
+<!ENTITY % TypeName "CDATA">
+    <!-- a fully qualified class or interface name. -->
+
+<!ENTITY % BeanName "CDATA">
+    <!-- a bean name as expected by java.beans.Beans instantiate(). -->
+
+<!ENTITY % Content "CDATA">
+    <!-- a MIME type followed by an IANA charset, as " type [; S? ['charset='] charset] " -->
+
+<!ENTITY % Length "CDATA">
+    <!-- nn for pixels or nn% for percentage length -->
+
+<!ENTITY % Pixels "CDATA">
+    <!-- integer representing length in pixels -->
+
+<!ENTITY % Bool "(true|false|yes|no)">
+    <!-- boolean -->
+
+<!-- used for object, applet, img, input and iframe -->
+<!ENTITY % ImgAlign "(top|middle|bottom|left|right)">
+
+<!--=================== Element Groups ====================================-->
+
+<!ENTITY % Directives "asp:directive.page|asp:directive.include">
+
+<!ENTITY % Scripts "asp:scriptlet|asp:declaration|asp:expression">
+
+<!ENTITY % Actions
+    "asp:useBean
+    |asp:setProperty
+    |asp:getProperty
+    |asp:include
+    |asp:forward
+    |asp:plugin"
+>
+
+<!ENTITY % Body "(asp:text|%Directives;|%Scripts;|%Actions;)*">
+
+
+<!-- ============================ Elements ============================ -->
+
+<!--    Root element of a JSP page.
+-->
+<!ELEMENT asp:root %Body;>
+<!ATTLIST asp:root
+    xmlns:asp       CDATA           "http://java.sun.com/JSP/Page"
+    version         CDATA           #REQUIRED
+>
+
+<!ELEMENT asp:directive.page EMPTY>
+<!ATTLIST asp:directive.page
+    language        CDATA           "java"
+    extends         %ClassName;     #IMPLIED
+    contentType     %Content;       "text/html; UTF-8"
+    import          CDATA           #IMPLIED
+    session         %Bool;          "true"
+    buffer          CDATA           "8kb"
+    autoFlush       %Bool;          "true"
+    isThreadSafe    %Bool;          "true"
+    info            CDATA           #IMPLIED
+    errorPage       %URL;           #IMPLIED
+    isErrorPage     %Bool;          "false"
+    pageEncoding    CDATA           #IMPLIED
+    isELIgnored     %Bool;          #IMPLIED
+>
+
+<!-- the asp:directive.include only appears in JSP documents and does
+     not appear in the XML views of JSP pages.
+-->
+
+<!ELEMENT asp:directive.include EMPTY>
+<!ATTLIST asp:directive.include
+    file            %URI;           #REQUIRED
+>
+
+<!ELEMENT asp:scriptlet (#PCDATA)>
+
+<!ELEMENT asp:declaration (#PCDATA)>
+
+<!ELEMENT asp:expression (#PCDATA)>
+
+<!ELEMENT asp:useBean %Body;>
+<!ATTLIST asp:useBean
+    id              ID              #REQUIRED
+    class           %ClassName;     #IMPLIED
+    type            %TypeName;      #IMPLIED
+    beanName        %BeanName;      #IMPLIED
+    scope           (page
+                    |session
+                    |request
+                    |application)   "page"
+>
+
+<!ELEMENT asp:setProperty EMPTY>
+<!ATTLIST asp:setProperty
+    name            %BeanID;        #REQUIRED
+    property        CDATA           #REQUIRED
+    value           CDATA           #IMPLIED
+    param           CDATA           #IMPLIED
+>
+
+<!ELEMENT asp:getProperty EMPTY>
+<!ATTLIST asp:getProperty
+    name            %BeanID;        #REQUIRED
+    property        CDATA           #REQUIRED
+>
+
+<!ELEMENT asp:include (asp:param*)>
+<!ATTLIST asp:include
+    flush           %Bool;          "false"
+    page            %URL;           #REQUIRED
+>
+
+<!ELEMENT asp:forward (asp:param*)>
+<!ATTLIST asp:forward
+    page            %URL;           #REQUIRED
+>
+
+<!ELEMENT asp:plugin (asp:params?, asp:fallback?)>
+<!ATTLIST asp:plugin
+    type            (bean|applet)   #REQUIRED
+    code            %URI;           #IMPLIED
+    codebase        %URI;           #IMPLIED
+    align           %ImgAlign;      #IMPLIED
+    archive         %UriList;       #IMPLIED
+    height          %Length;        #IMPLIED
+    hspace          %Pixels;        #IMPLIED
+    jreversion      CDATA           "1.2"
+    name            NMTOKEN         #IMPLIED
+    vspace          %Pixels;        #IMPLIED
+    width           %Length;        #IMPLIED
+    nspluginurl     %URI;           #IMPLIED
+    iepluginurl     %URI;           #IMPLIED
+>
+
+<!ELEMENT asp:params (asp:param+)>
+
+<!ELEMENT asp:param EMPTY>
+<!ATTLIST asp:param
+    name            CDATA           #REQUIRED
+    value           CDATA           #REQUIRED
+>
+
+<!ELEMENT asp:text #PCDATA>
+
